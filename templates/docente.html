@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+<h1>Registro Docente</h1>
+<form method="post" action="{{ url_for('reg_docente') }}" >
+	<p><label for="dniT">Dni: </label><input type="text" name="dniT"></p>
+    <p><label for="nombreT">Nombres: </label><input type="text" name="nombreT"></p>
+    <p><label for="apePaternoT">Apellido Paterno: </label><input type="text" name="apePaternoT"></p>
+    <p><label for="apeMaternoT">Apellido Materno: </label><input type="text" name="apeMaternoT"></p>
+	<p><label for="contraseniaT">Contraseña: </label><input type="password" name="contraseniaT"></p>
+	<input type="submit" values="Sign up">
+</form>
+    
+</body>
+</html>
