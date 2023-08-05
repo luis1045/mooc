@@ -17,7 +17,7 @@ db=SQLAlchemy(app)
 
 #clases para el ORM que mapean a las tablas
 class Docente(db.Model):
-	dni=db.Column(db.Integer, primary_key=True)
+	dniDocente=db.Column(db.Integer, primary_key=True)
 	nombre=db.Column(db.String(50), nullable=False)
 	apePaterno=db.Column(db.String(50),nullable=False)
 	apeMaterno=db.Column(db.String(50),nullable=False)
@@ -25,17 +25,18 @@ class Docente(db.Model):
 	cursos=db.relationship('Curso', backref='docente', lazy=True)#esto es para que desde la lista de cursos se acceda a los campos de Docente
 
 class Estudiante(db.Model):
-	dni=db.Column(db.Integer, primary_key=True)
+	dniEstudiante=db.Column(db.Integer, primary_key=True)
 	nombre=db.Column(db.String(50), nullable=False)
 	apePaterno=db.Column(db.String(50), nullable=False)
 	apeMaterno=db.Column(db.String(50), nullable=False)
 	contrasenia=db.Column(db.String(80), nullable=False)
+	subcripciones=db.relationship('Subcripcion', backref='estudiante',lazy=True)
 
 class Curso(db.Model):
 	idCurso=db.Column(db.Integer, primary_key=True, autoincrement=True)
 	categoria=db.Column(db.String(50), nullable=False)
 	nombre=db.Column(db.String(50), nullable=False)
-	dni=db.Column(db.Integer, db.ForeignKey('docente.dni'))#docente hace refenrencia ala tabla que es creada por la clase Docente que por convencion su tabla esta en minisculas
+	dniDocente=db.Column(db.Integer, db.ForeignKey('docente.dniDocente'))#docente hace refenrencia ala tabla que es creada por la clase Docente que por convencion su tabla esta en minisculas
 	sesiones=db.relationship('Sesion', backref='curso', lazy=True)
 
 class Sesion(db.Model):
@@ -52,6 +53,11 @@ class Video(db.Model):
 	nombre=db.Column(db.String(50), nullable=False)
 	idSesion=db.Column(db.Integer, db.ForeignKey('sesion.idSesion'))
 
+class Subcripcion(db.Model):
+	idSubcripcion=db.Column(db.Integer, primary_key=True, autoincrement=True)
+	dniEstudiante=db.Column(db.Integer, db.ForeignKey('estudiante.dniEstudiante'))
+	idCurso=db.Column(db.Integer, db.ForeignKey('curso.idCurso'))
+
 with app.app_context():# Ahora se neseita el contexto para crear la base de datos por defecto
     db.create_all()
 
@@ -65,8 +71,17 @@ def get_file(filename):
 	return send_from_directory(app.config["UPLOAD_FOLDER"], filename)
 
 ##la carnecita esta arriba
+
+#listar docentes
+@app.route("/docentes", methods=["GET"])
+def docentes():
+	docQuery=Docente.query.all()
+
+	for doc in docQuery:
+		print(doc.dniDocente)
+	return render_template("docentes.html", docentes=docQuery)
 #registro docente
-@app.route("/RegDocente", methods=["GET","POST"])
+@app.route("/regDocente", methods=["GET","POST"])
 def reg_docente():
 	if request.method == 'POST':
 		dniB = request.form["dniT"]
@@ -74,10 +89,10 @@ def reg_docente():
 		apePaternoB = request.form["apePaternoT"]
 		apeMaternoB = request.form["apeMaternoT"]
 		hashed_pw = generate_password_hash(request.form["contraseniaT"],method="sha256")
-		new_docente = Docente(dni=dniB, nombre=nombreB, apePaterno=apePaternoB,apeMaterno=apeMaternoB, contrasenia=hashed_pw)
+		new_docente = Docente(dniDocente=dniB, nombre=nombreB, apePaterno=apePaternoB,apeMaterno=apeMaternoB, contrasenia=hashed_pw)
 		db.session.add(new_docente)
 		db.session.commit()
-		return "se registro correctamente al docente"
+		return redirect("docentes")
 	return render_template("docente.html")
 
 
