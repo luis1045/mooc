@@ -11,36 +11,104 @@
     <div class="container-sm">
     
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar Docente</button>
-    <table class="table">
-        <thead class="table-dark">
-            <tr>
-                <td>DNI</td>
-                <td>Nombre</td>
-                <td>Apellido Paterno</td>
-                <td>Apellido Materno</td>
-                <td>Cursos</td>
-                <td>Accion</td>
-            </tr>
-        </thead>
-        {% for docente in docentes %}
-        <tbody>
-            <tr>
-                <td class="table-primary">{{ docente.dniDocente }}</td>
-                <td class="table-primary">{{ docente.nombre }}</td>
-                <td class="table-primary">{{ docente.apePaterno }}</td>
-                <td class="table-primary">{{ docente.apeMaterno }}</td>
-                <td class="table-primary">aqui curso</td>
-                <td><a href="">Editar</a><a href="">Eliminar</a></td>
-            </tr>
-        </tbody>
-        {% endfor %}
-    </table>
+      <table class="table table-bordered border-primary">
+          <thead class="table-dark">
+              <tr>
+                  <td class="text-center">DNI</td>
+                  <td class="text-center">Nombre</td>
+                  <td class="text-center">Apellido Paterno</td>
+                  <td class="text-center">Apellido Materno</td>
+                  <td class="text-center">Cursos</td>
+                  <td colspan="2" class="text-center">Accion</td>
+              </tr>
+          </thead>
+          <tbody>
+            {% for docente in docentes %}
+              <tr>
+                  <td class="table-primary">{{ docente.dniDocente }}</td>
+                  <td class="table-primary">{{ docente.nombre }}</td>
+                  <td class="table-primary">{{ docente.apePaterno }}</td>
+                  <td class="table-primary">{{ docente.apeMaterno }}</td>
+                  <td class="table-primary">aqui curso</td>
+                  <td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#update_docente_{{docente.dniDocente}}">Update</button></td>
+                  <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_docente_{{docente.dniDocente}}">Eliminar</button></td>
+                  <!--modal actualizar docente-->
+                  <div class="modal fade" id="update_docente_{{docente.dniDocente}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Actualziar Docente</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{url_for('up_docente', dni=docente.dniDocente)}}" method="post">
+                          <div class="modal-body">
+                            <div class="modal-body">
+                              <div class="mb-3">
+                                <label for="dni" class="col-form-label">Dni:</label>
+                                  <input type="text" readonly="true" class="form-control" id="dni" name="dniT" value="{{docente.dniDocente}}">
+                              </div>
+                              <div class="mb-3">
+                                <label for="nombre" class="col-form-label">Nombres:</label>
+                                  <input type="text" class="form-control" id="nombre" name="nombreT" value="{{docente.nombre}}">
+                              </div>
+                              <div class="mb-3">
+                                <label for="apePaterno" class="col-form-label">Apellido Paterno:</label>
+                                  <input type="text" class="form-control" id="apePaterno" name="apePaternoT" value="{{ docente.apePaterno }}">
+                              </div>
+                              <div class="mb-3">
+                                <label for="apeMaterno" class="col-form-label">Apellido Materno:</label>
+                                  <input type="text" class="form-control" id="apeMaterno" name="apeMaternoT" value="{{ docente.apeMaterno }}">
+                              </div>
+                              <div class="mb-3">
+                                <label for="contrasenia" class="col-form-label">Contraseña:</label>
+                                <input type="password" class="form-control" id="contrasenia" name="contraseniaT">
+                              </div>              
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- fin actualziar docente -->
+
+                  <!--modal elimianr docente-->
+                  <div class="modal fade" id="delete_docente_{{docente.dniDocente}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form action="{{url_for('del_docente', dni=docente.dniDocente)}}" method="post">
+                          <div class="modal-body">
+                            <div class="form-group row">
+                              <label class="col-sm-12 col-form-label">Quiere Eliminar al Docente <span style='font-weight:bold;color:red'>{{docente.nombre}}</span>?</label>
+                            </div>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </div>
+                  <!--fin modal eliminar docente-->
+              </tr>
+          
+            {% endfor %}
+          </tbody>
+      </table>
     </div>
   
   <!-- Button trigger modal -->
 
   
-  <!-- Modal -->
+  <!-- Modal crear docente  -->
   <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -50,26 +118,26 @@
         </div>
         <form action="{{url_for('reg_docente')}}" method="POST">
             <div class="modal-body">
-                    <div class="mb-3">
+                  <div class="mb-3">
                     <label for="dni" class="col-form-label">Dni:</label>
                     <input type="text" class="form-control" id="dni" name="dniT">
-                    </div>
-                    <div class="mb-3">
+                  </div>
+                  <div class="mb-3">
                     <label for="nombre" class="col-form-label">Nombres:</label>
                     <input type="text" class="form-control" id="nombre" name="nombreT">
-                    </div>
-                    <div class="mb-3">
+                  </div>
+                  <div class="mb-3">
                     <label for="apePaterno" class="col-form-label">Apellido Paterno:</label>
                     <input type="text" class="form-control" id="apePaterno" name="apePaternoT">
-                    </div>
-                    <div class="mb-3">
+                  </div>
+                  <div class="mb-3">
                     <label for="apeMaterno" class="col-form-label">Apellido Materno:</label>
                     <input type="text" class="form-control" id="apeMaterno" name="apeMaternoT">
-                    </div>
-                    <div class="mb-3">
+                  </div>
+                  <div class="mb-3">
                     <label for="contrasenia" class="col-form-label">Contraseña:</label>
                     <input type="password" class="form-control" id="contrasenia" name="contraseniaT">
-                    </div>              
+                  </div>              
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-success">Registrar</button>
@@ -79,6 +147,9 @@
       </div>
     </div>
   </div>
+
+  <!--modal  elimiar -->
+
   
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>

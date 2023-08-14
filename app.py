@@ -58,8 +58,7 @@ class Subcripcion(db.Model):
 	dniEstudiante=db.Column(db.Integer, db.ForeignKey('estudiante.dniEstudiante'))
 	idCurso=db.Column(db.Integer, db.ForeignKey('curso.idCurso'))
 
-with app.app_context():# Ahora se neseita el contexto para crear la base de datos por defecto
-    db.create_all()
+
 
 @app.route("/")
 def index():
@@ -74,7 +73,7 @@ def get_file(filename):
 
 #listar docentes
 @app.route("/docentes", methods=["GET"])
-def docentes():
+def list_docentes():
 	docQuery=Docente.query.all()
 
 	for doc in docQuery:
@@ -95,6 +94,32 @@ def reg_docente():
 		return redirect("docentes")
 	return render_template("docente.html")
 
+#actualizar docente
+@app.route("/updocente/<int:dni>", methods=["POST"])
+def up_docente(dni):
+	docente = Docente.query.get(dni)
+	if docente is None:
+		return "no se encuentra el docente indicado"
+	docente.nombre = request.form["nombreT"]
+	docente.apePaterno = request.form["apePaternoT"]
+	docente.apeMaterno = request.form["apeMaternoT"]
+	docente.contrasenia = generate_password_hash(request.form["contraseniaT"],method="sha256")
+	db.session.commit()
+	return redirect(url_for('list_docentes'))
+
+#emiminar docente
+@app.route("/deldocente/<int:dni>", methods=["POST"])
+def del_docente(dni):
+	docQuery=Docente.query.get(dni)
+	if docQuery is None:
+		"No exite el docente"
+	db.session.delete(docQuery)
+	db.session.commit()
+	return redirect(url_for('list_docentes'))
+
 
 if __name__ == '__main__':
+	with app.app_context():# Ahora se neseita el contexto para crear la base de datos por defecto
+		db.create_all()
 	app.run(debug=True, host="0.0.0.0")
+	
