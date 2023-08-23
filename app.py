@@ -118,6 +118,49 @@ def del_docente(dni):
 	return redirect(url_for('list_docentes'))
 
 
+#listar docentes
+@app.route("/regEstudiante", methods=["GET","POST"])
+def reg_estudiante():
+	if request.method == 'POST':
+		dniB = request.form["dniT"]
+		nombreB = request.form["nombreT"]
+		apePaternoB = request.form["apePaternoT"]
+		apeMaternoB = request.form["apeMaternoT"]
+		hashed_pw = generate_password_hash(request.form["contraseniaT"],method="sha256")
+		new_estudiante = Estudiante(dniEstudiante=dniB, nombre=nombreB, apePaterno=apePaternoB,apeMaterno=apeMaternoB, contrasenia=hashed_pw)
+		db.session.add(new_estudiante)
+		db.session.commit()
+		return redirect(url_for('list_estudiantes'))
+	return render_template("estudiante.html")
+
+@app.route("/estudiantes", methods=["GET"])
+def list_estudiantes():
+	estQuery = Estudiante.query.all()
+	return render_template("estudiantes.html", estudiantes=estQuery)
+
+@app.route("/upestudiante/<int:dni>", methods=["POST"])
+def up_estudiante(dni):
+	estudiante= Estudiante.query.get(dni)
+	if estudiante is None:
+		"dni No Encontrado"
+	estudiante.nombre = request.form["nombreT"]
+	estudiante.apePaterno = request.form["apePaternoT"]
+	estudiante.apeMaterno = request.form["apeMaternoT"]
+	estudiante.contrasenia = generate_password_hash(request.form["contraseniaT"],method="sha256")
+	db.session.commit()
+	return redirect(url_for('list_estudiantes'))
+
+@app.route("/delestudiante/<int:dni>", methods=["POST"])
+def del_estudiante(dni):
+	estQuery=Estudiante.query.get(dni)
+	if estQuery is None:
+		"No exite el docente"
+	db.session.delete(estQuery)
+	db.session.commit()
+	return redirect(url_for('list_estudiantes'))
+
+
+
 if __name__ == '__main__':
 	with app.app_context():# Ahora se neseita el contexto para crear la base de datos por defecto
 		db.create_all()
