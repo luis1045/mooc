@@ -160,6 +160,42 @@ def del_estudiante(dni):
 	return redirect(url_for('list_estudiantes'))
 
 
+@app.route("/cursos/<int:dni>", methods=["GET"])
+def listar_curso(dni):
+	dniB=dni
+	curQuery = Curso.query.filter_by(dniDocente=dniB).all()
+	if curQuery is None:
+		"No exite Cursos con este dni"
+	print(curQuery)
+	return render_template("cursos.html", cursos=curQuery,dni=dniB)
+
+@app.route("/regcursos", methods=["GET","POST"])
+def reg_curso():
+	categoriaB=request.form["categoriaT"]
+	nombreB = request.form["nombreT"]
+	dniB=request.form["dniDocenteT"]
+	new_curso = Curso(nombre=nombreB, categoria=categoriaB,dniDocente=dniB )
+	db.session.add(new_curso)
+	db.session.commit()
+	return redirect(url_for('listar_curso', dni=dniB))
+@app.route("/upcursos", methods=["POST"])
+def up_curso():
+	curso = Curso.query.get(request.form["idCursoT"])
+	if curso is None:
+		"No se encuentra el curso"
+	curso.nombre = request.form["nombreT"]
+	curso.categoria = request.form["categoriaT"]
+	db.session.commit()
+	return redirect(url_for('listar_curso', dni=curso.dniDocente))
+@app.route("/delcursos/<int:id>", methods=["POST"])
+def del_cursos(id):
+	curso = Curso.query.get(id)
+	if curso is None:
+		"No se encuentra el curso"
+	db.session.delete(curso)
+	db.session.commit()
+	return redirect(url_for('listar_curso', dni=curso.dniDocente))
+
 
 if __name__ == '__main__':
 	with app.app_context():# Ahora se neseita el contexto para crear la base de datos por defecto

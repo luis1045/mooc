@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+<body>
+    <div class="container-sm">
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearCurso">Crear Curso</button><label>Dni Del Docente {{dni}}</label>
+        {% if cursos is not none %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <td>Id de Curso</td>
+                        <td>Categoria</td>
+                        <td>Nombre</td>
+                        <td>Dni Docente</td>
+                        <td>Sesiones</td>
+                        <td colspan="2" class="text-center">Accion</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for curso in cursos %}
+                        <tr>
+                            <td class="table-primary">{{ curso.idCurso }}</td>
+                            <td class="table-primary">{{ curso.categoria }}</td>
+                            <td class="table-primary">{{ curso.nombre }}</td>
+                            <td class="table-primary">{{ curso.dniDocente }}</td>
+                            <td class="table-primary"><a href="">ir a sesiones</a></td>
+                            <td><button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#update_curso_{{curso.idCurso}}">Update</button></td>
+                            <td><button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#delete_curso_{{curso.idCurso}}">Delete</button></td>
+                            <!--modal actualizar curso-->
+                            <div class="modal fade" id="update_curso_{{curso.idCurso}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Actualziar Curso</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form action="{{url_for('up_curso')}}" method="post">
+                                        <div class="modal-body">
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="idCurso" class="col-form-label">Id Curso</label>
+                                                    <input type="text" readonly="true" class="form-control" id="idCurso" name="idCursoT" value="{{ curso.idCurso }}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="categoria" class="col-form-label">Categoria:</label>
+                                                    <input type="text" class="form-control" id="categoria" name="categoriaT" value="{{ curso.categoria }}">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="nombre" class="col-form-label">Nombre:</label>
+                                                    <input type="text" class="form-control" id="nombre" name="nombreT" value="{{ curso.nombre }}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                </div>
+                            </div>
+                            <!-- fin actualziar curso -->
+                            <!--modal elimianr curso-->
+                            <div class="modal fade" id="delete_curso_{{curso.idCurso}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <form action="{{url_for('del_cursos', id=curso.idCurso)}}" method="post">
+                                        <div class="modal-body">
+                                            <div class="form-group row">
+                                            <label class="col-sm-12 col-form-label">Quiere Eliminar al Curso de <span style='font-weight:bold;color:red'>{{curso.nombre}}</span>?</label>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-danger">Delete</button>
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--fin modal eliminar curso-->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>   
+    <!-- Modal crear docente  -->
+    <div class="modal fade" id="crearCurso" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Crear Docente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{url_for('reg_curso')}}" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="categoria" class="col-form-label">Categoria:</label>
+                            <input type="text" class="form-control" id="categoria" name="categoriaT">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombre" class="col-form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombre" name="nombreT">
+                        </div>
+                        <div class="mb-3">
+                            <label for="dni" class="col-form-label">Dni Docente:</label>
+                            <input type="text" class="form-control" id="dni" readonly="true" name="dniDocenteT" value="{{dni}}">
+                        </div>            
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--modal  crear --> 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
