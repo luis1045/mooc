@@ -32,11 +32,20 @@ class Estudiante(db.Model):
 	contrasenia=db.Column(db.String(80), nullable=False)
 	subcripciones=db.relationship('Subcripcion', backref='estudiante',lazy=True)
 
+#clases para areas y categoria
+
+
+class Categoria(db.Model):
+	idCategoria=db.Column(db.Integer, primary_key=True,autoincrement=True)
+	nombCategoria=db.Column(db.String(50),nullable=False)
+	descripcion=db.Column(db.String(200))
+	cursos=db.relationship('Curso', backref='categoria', lazy=True)
+
 class Curso(db.Model):
 	idCurso=db.Column(db.Integer, primary_key=True, autoincrement=True)
-	categoria=db.Column(db.String(50), nullable=False)
 	nombre=db.Column(db.String(50), nullable=False)
 	dniDocente=db.Column(db.Integer, db.ForeignKey('docente.dniDocente'))#docente hace refenrencia ala tabla que es creada por la clase Docente que por convencion su tabla esta en minisculas
+	idCategoria=db.Column(db.Integer, db.ForeignKey('categoria.idCategoria'))
 	sesiones=db.relationship('Sesion', backref='curso', lazy=True)
 
 class Sesion(db.Model):
@@ -51,7 +60,7 @@ class Sesion(db.Model):
 class Video(db.Model):
 	idVideo=db.Column(db.Integer, primary_key=True, autoincrement=True)
 	nombre=db.Column(db.String(50), nullable=False)
-	idSesion=db.Column(db.Integer, db.ForeignKey('sesion.idSesion'))
+	idSesion=db.Column(db.Integer, db.ForeignKey('sesion.idSesion'), unique=True)
 
 class Subcripcion(db.Model):
 	idSubcripcion=db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -80,7 +89,7 @@ def list_docentes():
 		print(doc.dniDocente)
 	return render_template("docentes.html", docentes=docQuery)
 #registro docente
-@app.route("/regDocente", methods=["GET","POST"])
+@app.route("/regdocente", methods=["GET","POST"])
 def reg_docente():
 	if request.method == 'POST':
 		dniB = request.form["dniT"]
@@ -118,8 +127,8 @@ def del_docente(dni):
 	return redirect(url_for('list_docentes'))
 
 
-#listar docentes
-@app.route("/regEstudiante", methods=["GET","POST"])
+#listar estudiantes
+@app.route("/regestudiante", methods=["GET","POST"])
 def reg_estudiante():
 	if request.method == 'POST':
 		dniB = request.form["dniT"]
@@ -130,7 +139,7 @@ def reg_estudiante():
 		new_estudiante = Estudiante(dniEstudiante=dniB, nombre=nombreB, apePaterno=apePaternoB,apeMaterno=apeMaternoB, contrasenia=hashed_pw)
 		db.session.add(new_estudiante)
 		db.session.commit()
-		return redirect(url_for('list_estudiantes'))
+		return redirect(url_for('list_estudiantes'))#si no esta logueado debe ir a login o loquearse automaticamnte y abrir el inicio
 	return render_template("estudiante.html")
 
 @app.route("/estudiantes", methods=["GET"])
@@ -159,22 +168,25 @@ def del_estudiante(dni):
 	db.session.commit()
 	return redirect(url_for('list_estudiantes'))
 
-
+#metodos para cursos
 @app.route("/cursos/<int:dni>", methods=["GET"])
 def listar_curso(dni):
 	dniB=dni
 	curQuery = Curso.query.filter_by(dniDocente=dniB).all()
+	print(curQuery)
+	categoria = Categoria.query.all()
+	print(categoria)
 	if curQuery is None:
 		"No exite Cursos con este dni"
-	print(curQuery)
-	return render_template("cursos.html", cursos=curQuery,dni=dniB)
+	return render_template("cursos.html", cursos=curQuery,dni=dniB,categoriaList=categoria)
 
 @app.route("/regcursos", methods=["GET","POST"])
 def reg_curso():
-	categoriaB=request.form["categoriaT"]
+	categoriaB=request.form.get('categoriaT')
+	print(categoriaB)
 	nombreB = request.form["nombreT"]
 	dniB=request.form["dniDocenteT"]
-	new_curso = Curso(nombre=nombreB, categoria=categoriaB,dniDocente=dniB )
+	new_curso = Curso(nombre=nombreB, idCategoria=categoriaB,dniDocente=dniB )
 	db.session.add(new_curso)
 	db.session.commit()
 	return redirect(url_for('listar_curso', dni=dniB))
@@ -195,6 +207,14 @@ def del_cursos(id):
 	db.session.delete(curso)
 	db.session.commit()
 	return redirect(url_for('listar_curso', dni=curso.dniDocente))
+
+#methodos para seciones
+@app.route("/listseciones/<int:idcurso>", methods=["GET"])
+def listar_seciones(idcurso):
+	seionQuery = Sesion.query.filter_by(idCurso=idcurso).all()
+	return render_template("sesiones.html", sesiones=seionQuery)
+
+
 
 
 if __name__ == '__main__':

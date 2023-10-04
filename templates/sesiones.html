@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}
+    Sesiones
+{% endblock %}
+{% block content %}
+    <div class="container-sm d-grid gap-3">
+        <div><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearSesion">Crear sesion</button></div>
+        {% if sesiones is not none %}
+            <table class="table">
+                <thead class="table-dark">
+                    <tr>
+                        <td>Id de Sesion</td>
+                        <td>Orden de Sesion</td>
+                        <td>Titulo de Sesion</td>
+                        <td>Contenido</td>
+                        <td>Material</td>
+                        <td>Id Curso</td>
+                        <td colspan="2" class="text-center">Accion</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for sesion in sesiones %}
+                        <tr>
+                            <td class="table-primary">{{ sesion.idSesion }}</td>
+                            <td class="table-primary">{{ sesion.numSesion }}</td>
+                            <td class="table-primary">{{ sesion.titulo }}</td>
+                            <td class="table-primary">{{ sesion.contenido }}</td>
+                            <td class="table-primary">{{ sesion.material }}</td>
+                            <td class="table-primary"><a href="">ir a sesiones</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+    <!-- Modal crear sesion  -->
+    <div class="modal fade" id="crearSesion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Crear Curso</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form action="{{url_for('reg_curso')}}" method="POST">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="categoria" class="col-form-label">Categoria:</label>
+                            <input type="text" class="form-control" id="categoria" name="categoriaT">
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombre" class="col-form-label">Nombre de Curso:</label>
+                            <input type="text" class="form-control" id="nombre" name="nombreT">
+                        </div>
+                        <div class="mb-3">
+                            <label for="dni" class="col-form-label">Dni Docente:</label>
+                            <input type="text" class="form-control" id="dni" readonly="true" name="dniDocenteT" value="{{dni}}">
+                        </div>            
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-success">Registrar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--modal  sesion -->    
+{% endblock %}

@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+{% extends "base.html" %}
 
+{% block title %}
+Registro Docentes
+{% endblock %}
+
+{% block content %}
 <h1>Registro Docente</h1>
 <form method="post" action="{{ url_for('reg_docente') }}" >
 	<p><label for="dniT">Dni: </label><input type="text" name="dniT"></p>
@@ -16,6 +14,4 @@
 	<p><label for="contraseniaT">Contraseña: </label><input type="password" name="contraseniaT"></p>
 	<input type="submit" values="Sign up">
 </form>
-    
-</body>
-</html>
+{% endblock %}
