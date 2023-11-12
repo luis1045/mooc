@@ -52,7 +52,7 @@ class Sesion(db.Model):
 	idSesion=db.Column(db.Integer, primary_key=True, autoincrement=True)
 	numSesion=db.Column(db.Integer, nullable=False)
 	titulo=db.Column(db.String(50), nullable=False)
-	contenido=db.Column(db.String(50))
+	contenido=db.Column(db.String(300))
 	material=db.Column(db.LargeBinary)
 	idCurso=db.Column(db.Integer, db.ForeignKey('curso.idCurso'))
 	videos=db.relationship('Video',backref='sesion',lazy=True)
@@ -214,7 +214,26 @@ def listar_seciones(idcurso):
 	seionQuery = Sesion.query.filter_by(idCurso=idcurso).all()
 	return render_template("sesiones.html", sesiones=seionQuery)
 
-
+@app.route("/regseciones",methods=["POST"])
+def reg_seciones():
+	#registrar la seccion y luego hacer el metodo para guardar el video
+	numSecion = request.form["numSesionT"]
+	titulo=request.form["tituloT"]
+	contenido=request.form["contenidoT"]
+	print("Num Seccion:{}".format(numSecion))
+	print("El titulo:{}".format(titulo))
+	print("El Contenido:{}".format(contenido))
+	if "fileSesion" not in request.files:
+		return "el formulario no tienen el archivo"
+	archivo=request.files["fileSesion"]
+	print("El Contenido:{}".format(archivo.filename))
+	print("El Contenido:{}".format(app.config["UPLOAD_FOLDER"]))	
+	#if os.path.exists(directorio) and os.path.isdir(directorio):
+	if archivo.filename == "":
+		return "nose se ha seleccionado el archivo"
+	nomSeguro=secure_filename(archivo.filename)#pone los / en _ para evitar accesos no desead ## Nota el nombre de pondra por id de secion y curso combinado
+	archivo.save(os.path.join(app.config["UPLOAD_FOLDER"], nomSeguro))
+	return "Finalizo Guardo correctamente"
 
 
 if __name__ == '__main__':

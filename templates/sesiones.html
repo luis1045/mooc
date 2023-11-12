@@ -38,22 +38,26 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Crear Curso</h5>
+                    <h5 class="modal-title" id="staticBackdropLabel">Crear Sesion</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{url_for('reg_curso')}}" method="POST">
+                <form action="{{url_for('reg_seciones')}}" enctype="multipart/form-data" method="POST">
                     <div class="modal-body">
                         <div class="mb-3">
-                            <label for="categoria" class="col-form-label">Categoria:</label>
-                            <input type="text" class="form-control" id="categoria" name="categoriaT">
+                            <label for="numSesion" class="col-form-label">Numero de Session:</label>
+                            <input type="text" class="form-control" id="numSesion" name="numSesionT">
                         </div>
                         <div class="mb-3">
-                            <label for="nombre" class="col-form-label">Nombre de Curso:</label>
-                            <input type="text" class="form-control" id="nombre" name="nombreT">
+                            <label for="titulo" class="col-form-label">Titulo:</label>
+                            <input type="text" class="form-control" id="titulo" name="tituloT">
                         </div>
                         <div class="mb-3">
-                            <label for="dni" class="col-form-label">Dni Docente:</label>
-                            <input type="text" class="form-control" id="dni" readonly="true" name="dniDocenteT" value="{{dni}}">
+                            <label for="contenido" class="col-form-label">Contenido:</label>
+                            <textarea class="form-control" id="contenido" name="contenidoT"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="fileSesion" class="col-form-label">Material:</label>
+                            <input type="file" class="form-control" id="fileSesion" name="fileSesion" value="elige tu pdf">
                         </div>            
                     </div>
                     <div class="modal-footer">
