@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -212,12 +212,12 @@ def del_cursos(id):
 @app.route("/listseciones/<int:idcurso>", methods=["GET"])
 def listar_seciones(idcurso):
 	seionQuery = Sesion.query.filter_by(idCurso=idcurso).all()
-	return render_template("sesiones.html", sesiones=seionQuery)
+	return render_template("sesiones.html", sesiones=seionQuery,idcursoT=idcurso)
 
 @app.route("/regseciones",methods=["POST"])
 def reg_seciones():
 	#registrar la seccion y luego hacer el metodo para guardar el video
-	numSecion = request.form["numSesionT"]
+	numSecion = request.form["numSesionT"]#usa ajax con vuejs para traer el numero de secciones
 	titulo=request.form["tituloT"]
 	contenido=request.form["contenidoT"]
 	print("Num Seccion:{}".format(numSecion))
@@ -235,6 +235,21 @@ def reg_seciones():
 	archivo.save(os.path.join(app.config["UPLOAD_FOLDER"], nomSeguro))
 	return "Finalizo Guardo correctamente"
 
+#@app.route('/api/data/<int:idCurso>', methods=["GET"])
+#def api_data(idCurso):
+#	print("Id de curso es :"+str(idCurso))
+#	data = {'message': '¡Datos desde el servidor!'}
+#	return jsonify(data)
+
+@app.route("/enumerarseciones/<int:idCurso>", methods=["GET"])
+def enumerar_seciones(idCurso):
+	numSecion =  Sesion.query.filter_by(idCurso=idCurso).count()
+	if numSecion!=0:
+		data={'numSec':numSecion+1}
+		return jsonify(data)
+	else:
+		data={'numSec':0}
+		return jsonify(data)
 
 if __name__ == '__main__':
 	with app.app_context():# Ahora se neseita el contexto para crear la base de datos por defecto

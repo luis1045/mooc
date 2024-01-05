@@ -4,7 +4,7 @@
 {% endblock %}
 {% block content %}
     <div class="container-sm d-grid gap-3">
-        <div><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearSesion">Crear sesion</button></div>
+        <div><button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crearSesion" >Crear sesion</button></div>
         {% if sesiones is not none %}
             <table class="table">
                 <thead class="table-dark">
@@ -43,9 +43,10 @@
                 </div>
                 <form action="{{url_for('reg_seciones')}}" enctype="multipart/form-data" method="POST">
                     <div class="modal-body">
+                        <input type="hidden" id="idCurso" value="{{ idcursoT }}">
                         <div class="mb-3">
                             <label for="numSesion" class="col-form-label">Numero de Session:</label>
-                            <input type="text" class="form-control" id="numSesion" name="numSesionT">
+                            <input type="text" class="form-control" id="numSesion" name="numSesionT" v-model="numSec">
                         </div>
                         <div class="mb-3">
                             <label for="titulo" class="col-form-label">Titulo:</label>
