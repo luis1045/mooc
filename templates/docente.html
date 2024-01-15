@@ -5,13 +5,38 @@ Registro Docentes
 {% endblock %}
 
 {% block content %}
-<h1>Registro Docente</h1>
-<form method="post" action="{{ url_for('reg_docente') }}" >
-	<p><label for="dniT">Dni: </label><input type="text" name="dniT"></p>
-    <p><label for="nombreT">Nombres: </label><input type="text" name="nombreT"></p>
-    <p><label for="apePaternoT">Apellido Paterno: </label><input type="text" name="apePaternoT"></p>
-    <p><label for="apeMaternoT">Apellido Materno: </label><input type="text" name="apeMaternoT"></p>
-	<p><label for="contraseniaT">Contraseña: </label><input type="password" name="contraseniaT"></p>
-	<input type="submit" values="Sign up">
-</form>
+    <div class="container" style="width: 30%;">
+        <form class="row g-3" method="post" action="{{ url_for('reg_docente') }}" >
+            <legend class="text-center header">Formulario Docente</legend>
+            <div class="col-md-6">
+                <label for="dniT" class="form-label">Dni:</label>
+                <input type="text" class="form-control" name="dniT">
+            </div>
+            <div class="col-md-6">
+                <label for="nombreT" class="form-label">Nombres: </label>
+                <input type="text" class="form-control" name="nombreT">
+            </div>
+            <div class="col-md-6">
+                <label for="apePaternoT" class="form-label">Apellido Paterno: </label>
+                <input type="text" class="form-control" name="apePaternoT">
+            </div>
+            <div class="col-md-6">
+                <label for="apeMaternoT" class="form-label">Apellido Materno: </label>
+                <input type="text" class="form-control" name="apeMaternoT">
+            </div>
+            <div class="col-12">
+                <label for="contraseniaT" class="form-label">Contraseña: </label>
+                <input type="password" class="form-control" name="contraseniaT">
+            </div>
+            <div class="col-12">
+                <input class="form-check-input" type="checkbox" id="gridCheck">
+                <label class="fcontrol" for="gridCheck">
+                    Aceptar Terminos
+                </label>
+            </div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary btn-lg">Registrarse</button>
+            </div>
+        </form>
+    </div>
 {% endblock %}

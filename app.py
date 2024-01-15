@@ -232,7 +232,10 @@ def reg_seciones():
 	if archivo.filename == "":
 		return "nose se ha seleccionado el archivo"
 	nomSeguro=secure_filename(archivo.filename)#pone los / en _ para evitar accesos no desead ## Nota el nombre de pondra por id de secion y curso combinado
-	archivo.save(os.path.join(app.config["UPLOAD_FOLDER"], nomSeguro))
+	archivo.filename="nombre_nuevo"+str(numSecion)#MODIFICAR PARA CREAR UN NUEVO NOMBRE DE ACUERDO A NOMBRE DEL CURSO Y EL ID DE SESSION
+	nomSeguro=archivo.filename
+	print("El Nuevo Nombre:{}".format(nomSeguro))
+	archivo.save(os.path.join(app.config["UPLOAD_FOLDER"], nomSeguro)) #falta guardar los datos en base sessiones
 	return "Finalizo Guardo correctamente"
 
 #@app.route('/api/data/<int:idCurso>', methods=["GET"])
