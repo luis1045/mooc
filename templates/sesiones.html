@@ -25,7 +25,7 @@
                             <td class="table-primary">{{ sesion.numSesion }}</td>
                             <td class="table-primary">{{ sesion.titulo }}</td>
                             <td class="table-primary">{{ sesion.contenido }}</td>
-                            <td class="table-primary">{{ sesion.material }}</td>
+                            <td class="table-primary"><a href="">ir a material</a></td>
                             <td class="table-primary"><a href="">ir a sesiones</a></td>
                         </tr>
                     {% endfor %}
@@ -43,7 +43,7 @@
                 </div>
                 <form action="{{url_for('reg_seciones')}}" enctype="multipart/form-data" method="POST">
                     <div class="modal-body">
-                        <input type="hidden" id="idCurso" value="{{ idcursoT }}">
+                        <input type="hidden" id="idCurso" name="idCursoT" value="{{ idcursoT }}">
                         <div class="mb-3">
                             <label for="numSesion" class="col-form-label">Numero de Session:</label>
                             <input type="text" class="form-control" id="numSesion" name="numSesionT" v-model="numSec">
@@ -59,7 +59,11 @@
                         <div class="mb-3">
                             <label for="fileSesion" class="col-form-label">Material:</label>
                             <input type="file" class="form-control" id="fileSesion" name="fileSesion" value="elige tu pdf">
-                        </div>            
+                        </div>
+                        <div class="mb-3">
+                            <label for="vieoSesion" class="col-form-label">Video:</label>
+                            <input type="file" class="form-control" id="vieoSesion" name="vieoSesion" value="elige tu Video">
+                        </div>             
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Registrar</button>

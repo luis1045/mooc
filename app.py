@@ -1,8 +1,9 @@
-from flask import Flask, request, redirect, url_for, render_template, send_from_directory,jsonify
+from flask import Flask, request, redirect, url_for, render_template, send_from_directory,jsonify,send_file
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 import os
+from io import BytesIO
 
 dbdir="sqlite:///" + os.path.abspath(os.getcwd()) + "/database.db"
 
@@ -220,23 +221,49 @@ def reg_seciones():
 	numSecion = request.form["numSesionT"]#usa ajax con vuejs para traer el numero de secciones
 	titulo=request.form["tituloT"]
 	contenido=request.form["contenidoT"]
+	idCurso = request.form["idCursoT"]
 	print("Num Seccion:{}".format(numSecion))
 	print("El titulo:{}".format(titulo))
 	print("El Contenido:{}".format(contenido))
 	if "fileSesion" not in request.files:
 		return "el formulario no tienen el archivo"
 	archivo=request.files["fileSesion"]
+	videoFile = request.files["vieoSesion"]
 	print("El Contenido:{}".format(archivo.filename))
 	print("El Contenido:{}".format(app.config["UPLOAD_FOLDER"]))	
 	#if os.path.exists(directorio) and os.path.isdir(directorio):
-	if archivo.filename == "":
-		return "nose se ha seleccionado el archivo"
-	nomSeguro=secure_filename(archivo.filename)#pone los / en _ para evitar accesos no desead ## Nota el nombre de pondra por id de secion y curso combinado
-	archivo.filename="nombre_nuevo"+str(numSecion)#MODIFICAR PARA CREAR UN NUEVO NOMBRE DE ACUERDO A NOMBRE DEL CURSO Y EL ID DE SESSION
-	nomSeguro=archivo.filename
+	if archivo.filename != "":
+		nomSeguro=secure_filename(archivo.filename)#pone los / en _ para evitar accesos no desead ## Nota el nombre de pondra por id de secion y curso combinado
+		nomSeguro=archivo.filename
+	else:
+		nomSeguro="sin archivo"
+	
+	if videoFile.filename == "":
+		return "nose se ha seleccionado el Video"
+	videoFile.filename =str(idCurso)+"-"+str(numSecion)+".mp4"
+	videoName=videoFile.filename
+	#grabanado en sesion 
+
+	new_sesion = Sesion(numSesion=numSecion,titulo=titulo,contenido=contenido,material=archivo.read(),idCurso=idCurso)
+	db.session.add(new_sesion)
+	db.session.commit()
 	print("El Nuevo Nombre:{}".format(nomSeguro))
-	archivo.save(os.path.join(app.config["UPLOAD_FOLDER"], nomSeguro)) #falta guardar los datos en base sessiones
+	videoFile.save(os.path.join(app.config["UPLOAD_FOLDER"], videoName)) #falta guardar los datos en base sessiones
 	return "Finalizo Guardo correctamente"
+
+
+
+##ruta para descargar pdf de prueba
+
+@app.route('/download/<int:pdf_id>')
+def download(pdf_id):
+	pdf = Sesion.query.get(pdf_id)
+	print(pdf)
+	if pdf:
+		file_stream=BytesIO(pdf.material)
+		return send_file(file_stream, as_attachment=True,download_name="datos",mimetype="application/pdf" )
+	return 'PDF not found', 404
+
 
 #@app.route('/api/data/<int:idCurso>', methods=["GET"])
 #def api_data(idCurso):
@@ -251,7 +278,7 @@ def enumerar_seciones(idCurso):
 		data={'numSec':numSecion+1}
 		return jsonify(data)
 	else:
-		data={'numSec':0}
+		data={'numSec':1}
 		return jsonify(data)
 
 if __name__ == '__main__':
